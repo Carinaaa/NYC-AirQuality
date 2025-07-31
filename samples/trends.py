@@ -1,5 +1,7 @@
 import pandas as pd
 from math import inf
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Goal: Analyze how air quality has changed over the years in NYC.
 
@@ -52,7 +54,29 @@ manhattan_temperature_summer = manhattan_temperature[manhattan_temperature["Day"
 manhattan_temperature_winter = manhattan_temperature[manhattan_temperature["Day"].str[:2].isin(["01","02","09","10","11","12"])]
 print(manhattan_temperature_summer)
 
+#print(manhattan_only[["geo_place_name","time_period","data_value"]])
+
+m_g = manhattan_only.groupby(["geo_place_name","time_period"])["data_value"].agg(["mean"])
+print(m_g)
+
+all_summer_data = []
+for name, group in m_g.groupby('time_period'):
+    if name == "Summer 2023":
+        group["temp_mean"] = manhattan_temperature_summer["AirTemp"].mean()
+    print(group.head())
+    all_summer_data.append(group)
+
+
 # Compute correlations.
+print(all_summer_data[-2])
+cor_matrix = all_summer_data[-2].corr() # method='pearson'
+print(cor_matrix)
+
+# If a column has zero variance (e.g., all values are the same), the correlation with any other column will be NaN.
+
+sns.heatmap(cor_matrix, annot=True, cmap='coolwarm')
+plt.title("Correlation Matrix")
+plt.show()
 
 # Perform linear regression or correlation matrices.
 # Create synthetic data for hypothesis testing.

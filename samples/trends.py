@@ -44,16 +44,13 @@ for name, group_df in regions_periods:
     print(f"Group: {name}")
 
 # Merge datasets (air quality + weather).
-manhattan_only = all_data[(all_data["geo_place_name"].str.contains("Manhattan")) & (all_data['time_period'].str.contains("2022")) | (all_data['time_period'].str.contains("2023"))]
-print(manhattan_only[["geo_place_name","time_period","data_value"]])
+manhattan_only = all_data[(all_data['time_period'].str.contains("2022")) | (all_data['time_period'].str.contains("2023"))]
+manhattan_only = manhattan_only[(manhattan_only["geo_place_name"].str.contains("Manhattan"))]
 
 manhattan_temperature = pd.read_csv("../data/Filtered_Manhatten_20250731.csv")
 manhattan_temperature_summer = manhattan_temperature[manhattan_temperature["Day"].str[:2].isin(["03","04","05","06","07","08"])]
 manhattan_temperature_winter = manhattan_temperature[manhattan_temperature["Day"].str[:2].isin(["01","02","09","10","11","12"])]
 print(manhattan_temperature_summer)
-
-avg_manhattan = manhattan_only.groupby(["geo_place_name","time_period"])["data_value"].agg('mean')
-#print(avg_manhattan)
 
 # Compute correlations.
 
